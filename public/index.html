@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <div id="app">
+            <h1>HamNet Net Manager</h1>
+            <div v-if="PAGE_ID==0" id="nets">
+                <h2>Net Viewer</h2>
+                <div id="nets-input">
+                    <input type="text" placeholder="Name" v-model="netName">
+                    <input type="date" v-model="netDate">
+                    <input type="number" placeholder="Frequency (MHz)" v-model="netFrequency">
+                    <input type="text" placeholder="Controller" v-model="netController">
+                    <input type="text" placeholder="Description" v-model="netDescription">
+                    <button v-on:click="addNet">Add Net</button>
+                </div>
+                <div v-if="netCreateErrors.length > 0">
+                    <ul class="warning">
+                        <li v-for="error, i in netCreateErrors">
+                            {{error}}
+                        </li>
+                    </ul>
+                </div>
+                <div v-if="nets.length > 0">
+                    <h2>{{net_heading}}</h2>
+
+                    <ul>
+                        <li v-for="net, i in nets" class="padli">
+                            <div><label>Name:</label>{{ net.name }}</div>
+                            <div><label>Date:</label>{{ net.date.split("T")[0] }}</div>
+                            <div><label>Frequency:</label>{{net.frequency}}</div>
+                            <div><label>Controller:</label>{{net.controller}}</div>
+                            <div><label>Description:</label>{{net.description}}</div>
+                            <div><label>Message count:</label>{{net.messages.length}}</div>
+                            <div v-if="net.flaggedForDelete">
+                                Are you sure?
+                                <span>
+                                    <button v-on:click=resetNetDeleteFlag(net)>No</button>
+                                    <button class="danger" v-on:click=deleteNet(net)>Yes</button>
+                                </span>
+                            </div>
+                            <div v-else>
+                                <span>
+                                    <button v-on:click=changeViewedNet(net)>View net</button>
+                                    <button v-on:click=deleteNet(net)>Delete</button>
+                                </span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div v-else>
+                    <h2>No nets found. Try creating one!</h2>
+                </div>
+            </div> 
+            <div v-if="PAGE_ID == 1" id="net-viewer">
+                <h2>Net Overview</h2>
+                <button v-on:click="backToNets">Back to Net List</button>
+                <h3>{{viewedNet.name}}</h3>
+                <div id="net-info" v-if="is_net_viewed">
+                    <div v-if="editingNet==true">
+                        <div class="light-background">
+                        <div><label>Name:</label><input v-model="netName" type="text"></div>
+                        <div><label>Date:</label> <input v-model="netDate" type="date"></div>
+                        <div><label>Frequency:</label> <input v-model="netFrequency" type="number"></div>
+                        <div><label>Net controller:</label><input v-model="netController" type="text"></div>
+                        <div><label>Description:</label><input v-model="netDescription" class="long-text-input" type="text"></div>
+                        <span>
+                            <button v-on:click="toggleEditModeNet">Cancel</button>
+                            <button v-on:click="updateNet">Submit</button>
+                        </span>
+                        </div>
+                    </div>
+                    <div v-else>
+                        <div class="light-background">
+                        <div><label>Date:</label>{{viewedNet.date.split("T")[0]}} </div>
+                        <div><label>Frequency:</label>{{viewedNet.frequency}}</div>
+                        <div><label>Controller:</label>{{viewedNet.controller}}</div>
+                        <div><label>Description:</label>{{viewedNet.description}}</div>
+        
+                        <button v-on:click=toggleEditModeNet>Edit Net</button>
+                    </div>
+                    </div>
+                    <div v-if="netUpdateErrors.length > 0 && editingNet">
+                        <ul class="warning">
+                            <li v-for="error, i in netUpdateErrors">
+                                {{error}}
+                            </li>
+                        </ul>
+                    </div>
+                        
+
+
+                    <div id="net-messages">
+                        <div id="message-input">
+                            <input type="text" placeholder="Write a message..." v-model="messageText">
+                            <button v-on:click=addMessage>Add Message</button>
+                        </div>
+                        <div class="warning" v-if="messageCreateErrors.length > 0">
+                            <ul>
+                                <li v-for="error, i in messageCreateErrors">
+                                    {{error}}
+                                </li>
+                            </ul>
+                        </div>
+                        <h3>{{messages_header}}</h3>
+                        <div v-if="message_count > 0">
+                            <ul>
+                                <li v-for="message, i in messages" class="padli">
+                                    
+                                    <div v-if="message.editing">
+                                        <input v-model="tempMessageText" class="long-text-input" type="Text">
+                                        <div>
+                                            <button v-on:click=updateMessage(message)>Submit</button>
+                                            <button v-on:click=toggleEditMessage(message)>Cancel</button>
+                                        </div>
+                                        
+                                        <div class="warning" v-if="updateMessageErrors.length > 0">
+                                            <ul>
+                                                <li v-for="error, i in updateMessageErrors">
+                                                    {{error}}
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div v-else>
+                                        <div><p>{{message.text}}</p></div>
+                                        
+                                        <div v-if="message.flaggedForDelete">
+                                            Are you sure?
+                                            <span>
+                                                <button class="danger" v-on:click=deleteMessage(message)>Yes</button>
+                                                <button v-on:click=resetMessageDeleteFlag(message)>No</button>
+                                            </span>
+                                        </div>
+                                        <div v-else>
+                                            <button v-on:click=deleteMessage(message)>Delete</button>
+                                            <button v-on:click=toggleEditMessage(message)>Edit</button>
+                                        </div>
+                                        <div>
+                                            <small>
+                                                <span>Created at: {{message.createdAt}}</span>
+                                                <span>Updated at: {{message.updatedAt}}</span>
+                                            </small>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div v-else>
+                        </div>
+                            
+                    </div>
+                </div>
+                <div v-else>
+                    No net selected for viewing.
+                </div>
+            </div>
+            
+        </div>
+
+        <script src="https://unpkg.com/vue@3"></script>
+		<script src="app.js"></script>
+    </body>
+</html>

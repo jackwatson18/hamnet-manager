@@ -1,0 +1,118 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #858585;
+}
+
+#app {
+    max-width: 90%;
+    margin: auto;
+    background-color: #FFFFFF;
+    padding-bottom: 1rem;
+}
+
+span {
+    padding-right: 1rem;
+}
+
+h1,h2,h3 {
+    text-align: center;
+}
+
+h1 {
+    background-image: linear-gradient(#6363e2,#000097 );
+    color: #FFFFFF;
+    font-size: 3rem;
+    padding: 1.5rem;
+    margin-bottom: 0px;
+}
+
+h2 {
+    background-image: linear-gradient(#6363e2,#000097 );
+    color: #FFFFFF;
+}
+
+h3 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.danger {
+    background-color: #FF0000;
+    color: #FFFFFF;
+}
+
+.warning {
+    background-color:#ffa0a0;
+    border-radius: 5px;
+    margin: 1rem;
+}
+
+button {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    min-width: 100px;
+    padding-left: auto;
+    padding-right: auto;
+    margin: 0.25rem;
+}
+
+input {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+}
+
+ul {
+    list-style: none;
+    padding: 2rem;
+}
+
+.padli {
+    padding: 0.5rem;
+}
+
+
+.padli:nth-child(odd) {
+    background-color:#e6e6e6;
+}
+
+.net-info {
+    display: flex;
+}
+
+.net-description {
+    margin-bottom: 1rem;
+}
+
+#message-input {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+}
+
+h4 {
+    margin-bottom: 0.25rem;
+}
+
+.light-background {
+    background-color: #e6e6e6;
+    padding: 1rem;
+    margin: 5px;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 5px;
+    max-width: 70%;
+}
+
+.long-text-input {
+    min-width: 50%;
+    padding-right: auto;
+}
+
+label {
+    display: inline-block;
+    width: 150px;
+    font-weight: bold;
+    text-align: right;
+    margin-right: 0.5rem;
+}
